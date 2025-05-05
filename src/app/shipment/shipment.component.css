@@ -30,3 +30,7 @@
   justify-content: flex-end;
   gap: 8px;
 }
+
+.error-text {
+  color: red;
+}

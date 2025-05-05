@@ -97,6 +97,11 @@
           id="receive-date"
           size="small"
         />
+        @if (form.controls.receiptDate.invalid) {
+          <small class="error-text">
+            {{ form.controls.receiptDate.errors?.["min"] }}
+          </small>
+        }
       </div>
       <div class="form-actions">
         <p-button

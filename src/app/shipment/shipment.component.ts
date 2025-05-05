@@ -54,7 +54,7 @@ const minDate =
   (min: Date): ValidatorFn =>
   (control: AbstractControl) =>
     control.value instanceof Date && control.value.valueOf() < min?.valueOf()
-      ? { min: { 'en-gb': `The date must be future date` } }
+      ? { min: `The date must be future date` }
       : null;
 
 @Component({
