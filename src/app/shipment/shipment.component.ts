@@ -163,10 +163,10 @@ export class ShipmentComponent {
 
         defer(() => {
           return this.filter.valueChanges.pipe(
+            debounceTime(500),
             tap(() => this.isLoading$.next(true)),
             takeUntilDestroyed(this.destroyRef),
             startWith(this.filter.value),
-            debounceTime(500),
             switchMap((filter) => {
               const reqParams = {
                 page,
