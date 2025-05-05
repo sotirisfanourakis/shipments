@@ -1,0 +1,32 @@
+.shipment {
+  padding: 48px 48px 0 48px;
+  height: 100%;
+}
+
+.shipment__container {
+  width: 1050px;
+  margin: auto;
+}
+
+.shipment__actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.shipment__grid {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 16px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

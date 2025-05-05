@@ -1,0 +1,121 @@
+<section class="shipment">
+  <div class="shipment__container">
+    <div class="shipment__actions">
+      <p-floatlabel variant="on">
+        <input
+          [formControl]="filter"
+          pInputText
+          autocomplete="off"
+          id="search-filter"
+          pSize="small"
+        />
+        <label for="search-filter">Search</label>
+      </p-floatlabel>
+      <p-button
+        (click)="openDialog()"
+        icon="pi pi-plus"
+        label="New shipment"
+        variant="outlined"
+        severity="info"
+        size="small"
+      />
+    </div>
+    <ag-grid-angular
+      (cellEditRequest)="editRow($event)"
+      (gridReady)="onGridReady($event)"
+      (rowSelected)="selectRow($event)"
+      [cacheBlockSize]="10"
+      [columnDefs]="colDefs"
+      [getRowId]="getRowId"
+      [loading]="isLoading$ | async"
+      [paginationPageSizeSelector]="[10, 20, 50, 100]"
+      [paginationPageSize]="10"
+      [pagination]="true"
+      [readOnlyEdit]="true"
+      [rowSelection]="{ mode: 'multiRow' }"
+      [serverSideDatasource]="datasource"
+      class="shipment__grid"
+      domLayout="autoHeight"
+      overlayNoRowsTemplate="No data available."
+      rowModelType="serverSide"
+    />
+    <p-toast position="top-center" />
+    <p-confirm-popup />
+    <p-button
+      (click)="deleteShipments($event)"
+      [disabled]="rowsToDelete.length === 0"
+      [loading]="isDeleteLoading$ | async"
+      icon="pi pi-trash"
+      label="Delete"
+      variant="outlined"
+      severity="danger"
+      size="small"
+      type="button"
+    />
+  </div>
+  <p-dialog
+    header="New shipment"
+    position="top"
+    [modal]="true"
+    [(visible)]="isDialogVisible"
+    [draggable]="false"
+    [style]="{ width: '40rem', height: '70vh' }"
+  >
+    <form (ngSubmit)="createShipment()" [formGroup]="form">
+      <div class="form-item">
+        <label for="name">Name</label>
+        <input
+          formControlName="name"
+          pInputText
+          autocomplete="off"
+          id="name"
+          pSize="small"
+        />
+      </div>
+      <div class="form-item">
+        <label for="name">Status</label>
+
+        <p-select
+          [options]="[
+            { name: 'Pending', value: 'Pending' },
+            { name: 'Shipped', value: 'Shipped' },
+            { name: 'Delivered', value: 'Delivered' },
+          ]"
+          optionLabel="name"
+          optionValue="value"
+          formControlName="status"
+          size="small"
+        />
+      </div>
+      <div class="form-item">
+        <label for="name">Receipt Date</label>
+        <p-date-picker
+          [minDate]="minDate"
+          [showTime]="true"
+          dateFormat="dd/mm/yy"
+          formControlName="receiptDate"
+          id="receive-date"
+          size="small"
+        />
+      </div>
+      <div class="form-actions">
+        <p-button
+          (click)="isDialogVisible = false"
+          label="Cancel"
+          severity="secondary"
+          size="small"
+          type="button"
+          variant="outlined"
+        />
+        <p-button
+          [disabled]="form.invalid"
+          [loading]="isCreateLoading$ | async"
+          label="Create"
+          severity="primary"
+          size="small"
+          type="submit"
+        />
+      </div>
+    </form>
+  </p-dialog>
+</section>
