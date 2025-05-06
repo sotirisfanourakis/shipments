@@ -160,6 +160,7 @@ export class ShipmentComponent {
     return {
       getRows: (params) => {
         const page = params.request.startRow! / 10;
+        this.isLoading$.next(true);
 
         defer(() => {
           return this.filter.valueChanges.pipe(
