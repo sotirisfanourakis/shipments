@@ -82,7 +82,7 @@ export class ShipmentComponent {
   private dateFormatter = (params: ValueFormatterParams): string =>
     `${this.padNumber(params.value.getDate())}/${this.padNumber(params.value.getMonth() + 1)}/${params.value.getFullYear()} ${this.padNumber(params.value.getHours())}:${this.padNumber(params.value.getMinutes())}`;
 
-  colDefs: ColDef[] = [
+  readonly colDefs: ColDef[] = [
     {
       field: 'id',
       lockPosition: 'left',
@@ -140,14 +140,14 @@ export class ShipmentComponent {
       minDate(new Date()),
     ]),
   });
-  gridApi: GridApi | null = null;
   rowsToDelete: Shipment[] = [];
   readonly isCreateLoading$ = new BehaviorSubject(false);
   readonly isDeleteLoading$ = new BehaviorSubject(false);
   isDialogVisible = false;
   readonly isLoading$ = new BehaviorSubject(false);
   readonly minDate = new Date();
-  totalElements: number = 0;
+  private gridApi: GridApi | null = null;
+  private totalElements: number = 0;
 
   constructor(
     private readonly confirmationService: ConfirmationService,
@@ -168,45 +168,41 @@ export class ShipmentComponent {
             tap(() => this.isLoading$.next(true)),
             takeUntilDestroyed(this.destroyRef),
             startWith(this.filter.value),
-            switchMap((filter) => {
-              const reqParams = {
-                page,
-                size: 10,
-                ...(filter && { filter: filter as string }),
-                ...(params.request.sortModel.length > 0 && {
-                  sort: params.request.sortModel.map(
-                    (value) => `${value.colId},${value.sort}`,
-                  ),
-                }),
-              };
-              const request =
-                'status' in params.request.filterModel!
-                  ? this.shipmentService.getShipmentsByStatus({
-                      ...reqParams,
-                      status: (params.request.filterModel as FilterModel)[
-                        'status'
-                      ].values,
-                    })
-                  : this.shipmentService.getShipments(reqParams);
-
-              return request.pipe(
-                tap((pagedShipments) => {
-                  this.totalElements = pagedShipments.totalElements;
-                }),
-                map(({ content }) => content),
-                catchError((error) => {
-                  this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: error.error,
-                    life: 3000,
-                  });
-                  params.fail();
-                  return of([]);
-                }),
-                finalize(() => this.isLoading$.next(false)),
-              );
-            }),
+            switchMap((filter) =>
+              this.shipmentService
+                .getShipments({
+                  page,
+                  size: 10,
+                  ...(filter && { filter: filter as string }),
+                  ...(params.request.sortModel.length > 0 && {
+                    sort: params.request.sortModel.map(
+                      (value) => `${value.colId},${value.sort}`,
+                    ),
+                  }),
+                  ...('status' in params.request.filterModel! && {
+                    status: (params.request.filterModel as FilterModel)[
+                      'status'
+                    ].values,
+                  }),
+                })
+                .pipe(
+                  tap((pagedShipments) => {
+                    this.totalElements = pagedShipments.totalElements;
+                  }),
+                  map(({ content }) => content),
+                  catchError((error) => {
+                    this.messageService.add({
+                      severity: 'error',
+                      summary: 'Error',
+                      detail: error.error,
+                      life: 3000,
+                    });
+                    params.fail();
+                    return of([]);
+                  }),
+                  finalize(() => this.isLoading$.next(false)),
+                ),
+            ),
           );
         }).subscribe((shipments) => {
           if (shipments.length === 0) {

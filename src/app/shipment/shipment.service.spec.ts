@@ -163,7 +163,7 @@ describe('ShipmentService', () => {
 
   it('should request shipments by status', () => {
     service
-      .getShipmentsByStatus({ page: 0, size: 10, status: ['Pending'] })
+      .getShipments({ page: 0, size: 10, status: ['Pending'] })
       .subscribe((data) =>
         expect(data).toEqual({
           size: 10,

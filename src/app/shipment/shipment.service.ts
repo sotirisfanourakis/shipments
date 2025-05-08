@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, EMPTY, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Paged, Shipment } from './shipment';
 
 @Injectable({
@@ -24,16 +24,7 @@ export class ShipmentService {
     size: number;
     filter?: string;
     sort?: string[];
-  }): Observable<Paged<Shipment>> {
-    return this.http.get<Paged<Shipment>>(`http://shipments`, { params });
-  }
-
-  getShipmentsByStatus(params: {
-    page: number;
-    size: number;
-    status: string[];
-    filter?: string;
-    sort?: string[];
+    status?:('Pending' | 'Delivered' | 'Shipped')[];
   }): Observable<Paged<Shipment>> {
     return this.http.get<Paged<Shipment>>(`http://shipments`, { params });
   }
